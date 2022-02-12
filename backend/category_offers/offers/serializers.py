@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from offers.models import Offer
+from offers.models import Offer, Category
 
 class OfferSerializer(serializers.ModelSerializer):
 
@@ -17,3 +17,16 @@ class OfferSerializer(serializers.ModelSerializer):
     # description = models.TextField()
     # price = models.DecimalField(max_digits=10, decimal_places=2)
     # created_at = models.DateTimeField(auto_now_add=True)
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(label='ID', read_only=True)
+    name = serializers.CharField()
+    ordering = serializers.IntegerField()
+    class Meta:
+        model = Offer
+        fields = ['id', 'name', 'ordering']
+
+    # class Category(models.Model):
+    # name = models.TextField()
+    # ordering = models.IntegerField(unique=True)

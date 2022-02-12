@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from offers.views import OfferList
+from offers.views import OfferList, CategoryList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('offers/', OfferList.as_view(), name='offers')
+    path('offers/', OfferList.as_view(), name='offers'),
+    path('category/', CategoryList.as_view(), name='category')
 ]
