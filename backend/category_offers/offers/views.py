@@ -1,3 +1,22 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import authentication, permissions
+from offers.models import Offer
+from offers.serializers import OfferSerializer
+class OfferList(APIView):
+    """
+    View to list all offers in the system.
 
-# Create your views here.
+    * Requires token authentication.
+    * Only admin users are able to access this view.
+    """
+    # authentication_classes = [authentication.TokenAuthentication]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, format=None):
+        """
+        Return a list of all offers.
+        """
+        offers = [offer for offer in Offer.objects.all()]
+        serializer = OfferSerializer(offers, many=True)
+        return Response(serializer.data)
