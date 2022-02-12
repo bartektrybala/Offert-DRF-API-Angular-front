@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
 from offers.models import Offer
 from offers.serializers import OfferSerializer
+
+
 class OfferList(APIView):
     """
     View to list all offers in the system.
@@ -19,4 +20,4 @@ class OfferList(APIView):
         """
         offers = [offer for offer in Offer.objects.all()]
         serializer = OfferSerializer(offers, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, headers={'Access-Control-Allow-Origin': '*'})
