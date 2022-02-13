@@ -1,7 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
 from offers.models import Offer, Category
 from offers.serializers import CategorySerializer, OfferSerializer 
 
