@@ -18,7 +18,7 @@ class OfferList(APIView):
         """
         Return a list of all offers.
         """
-        offers = [offer for offer in Offer.objects.all()]
+        offers = Offer.objects.all()
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data)
 
@@ -36,7 +36,7 @@ class CategoryList(APIView):
         """
         Return a list of all categories.
         """
-        categories = Category.objects.all()
+        categories = Category.objects.order_by('ordering')
         
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
