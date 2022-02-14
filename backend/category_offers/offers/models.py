@@ -17,6 +17,9 @@ class Offer(models.Model):
     def __str__(self):
         return self.title
 
+    def get_category_id(self):
+        return self.category.id
+
 
 
     

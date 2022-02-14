@@ -15,10 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from offers.views import OfferList, CategoryList
+from offers.views import OfferList, OfferCategoryList, CategoryList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('offers/', OfferList.as_view(), name='offers'),
+    path('offers/<int:category>', OfferCategoryList.as_view(), name='offers-category'),
     path('category/', CategoryList.as_view(), name='category')
 ]
+
+
+#re_path('^purchases/(?P<username>.+)/$', PurchaseList.as_view()),
