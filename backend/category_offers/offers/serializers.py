@@ -18,6 +18,7 @@ class CategorySerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(label='ID', read_only=True)
     name = serializers.CharField()
     ordering = serializers.IntegerField()
+    
     class Meta:
-        model = Offer
+        model = Category
         fields = ['id', 'name', 'ordering']
