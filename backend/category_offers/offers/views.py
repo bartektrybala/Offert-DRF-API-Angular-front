@@ -8,24 +8,17 @@ from offers.serializers import CategorySerializer, OfferSerializer
 
 class OfferList(APIView):
 
-    def get(self, request, format=None):
-        """
-        Return a list of all offers.
-        """
-        offers = Offer.objects.all()
-        serializer = OfferSerializer(offers, many=True)
-        return Response(serializer.data)
-       
-
-class OfferCategoryList(APIView):
-
     def get(self, request, format=None, **kwargs):
         """
-        Return a list of all offers with category (category's id) passed in the URL.
+        Return a list of all offers, or a list of offers of a category (category's id) passed as a query parameter
         """
-        category_id = self.kwargs['category']
-        offers = Offer.objects.filter(category__id=category_id)
-        serializer = OfferSerializer(offers,many=True)
+        category_id = request.GET.get('category', None)
+        if category_id is None:
+            offers = Offer.objects.all()
+        else:
+            offers = Offer.objects.filter(category__id=category_id)
+
+        serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data)
 
 class CategoryList(APIView):
