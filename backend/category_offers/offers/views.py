@@ -24,7 +24,7 @@ class OfferCategoryList(APIView):
         Return a list of all offers with category (category's id) passed in the URL.
         """
         category_id = self.kwargs['category']
-        offers = Offer.objects.filter(category_id=category_id)
+        offers = Offer.objects.filter(category__id=category_id)
         serializer = OfferSerializer(offers,many=True)
         return Response(serializer.data)
 
