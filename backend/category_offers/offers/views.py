@@ -1,10 +1,22 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework.decorators import api_view
 from offers.models import Offer, Category
 from offers.serializers import CategorySerializer, OfferSerializer 
 
 from rich import print
+
+@api_view(['GET'])
+def ApiOverview(request):
+
+    api_urls = {
+        'all_offers': '/offers',
+        'offers_by_category': '/offers?category=category_id',
+        'all_categories': '/category',
+        'offer_by_id': '/offers/ID',
+    }
+  
+    return Response(api_urls)
 
 class OfferList(APIView):
 
