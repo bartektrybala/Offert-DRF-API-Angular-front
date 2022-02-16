@@ -1,26 +1,16 @@
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from offers.models import Offer, Category
 from offers.serializers import CategorySerializer, OfferSerializer 
+from rest_framework import status, viewsets
 
 from rich import print
 
-@api_view(['GET'])
-def ApiOverview(request):
+class OfferViewSet(viewsets.ModelViewSet):
 
-    api_urls = {
-        'all_offers': '/offers',
-        'offers_by_category': '/offers?category=category_id',
-        'all_categories': '/category',
-        'offer_by_id': '/offers/ID',
-    }
-  
-    return Response(api_urls)
+    serializer_class = OfferSerializer
+    queryset = Offer.objects.all()
 
-class OfferList(APIView):
-
-    def get(self, request, format=None):
+    def get_offers(self, request):
         """
         Return a list of all offers, or a list of offers of a category (category's id) passed as a query parameter.
         """
@@ -34,26 +24,96 @@ class OfferList(APIView):
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data)
 
-
-class SingleOfferList(APIView):
-    
-    def get(self, request, format=None, **kwargs):
+    def get_offer(self, request, **kwargs):
         """
         Return an offer by its id.
         """
-        offer_id = self.kwargs['id']
-        offer = Offer.objects.get(id=offer_id)
+        offer_id = kwargs['id']
+        try:
+            offer = Offer.objects.get(id=offer_id)
+        except Offer.DoesNotExist:
+            error = 'There is no offer with given id'
+            return Response(error)
         serializer = OfferSerializer(offer)
         return Response(serializer.data)
 
-class CategoryList(APIView):
+    def add_offer(self, request, **kwargs):
+        offer = OfferSerializer(data=request.data)
+    
+        if offer.is_valid():
+            offer.save()
+            return Response(offer.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, format=None):
+    def change_offer(self, request, **kwargs):
+        offer_id = kwargs['id']
+        try:
+            offer = Offer.objects.get(id=offer_id)
+        except Offer.DoesNotExist:
+            error = 'There is no offer with given id'
+            return Response(error)
+
+        serializer = OfferSerializer(instance=offer, data=request.data)
+    
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def delete_offer(self, request):
+        pass
+
+class CategoryViewSet(viewsets.ModelViewSet):
+
+    serializer_class = CategorySerializer
+    queryset = Category.objects.all()
+
+    def get_categories(self, request):
         """
         Return a list of all categories.
         """
         categories = Category.objects.order_by('ordering')
-        
+
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
+
+    def get_category(self, request, **kwargs):
+        category_id = kwargs['id']
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            error = 'There is no category with given id'
+            return Response(error)
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
+
+    def add_category(self, request, **kwargs):
+        category = CategorySerializer(data=request.data)
+
+        if category.is_valid():
+            category.save()
+            return Response(category.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def change_category(self, request, **kwargs):
+        category_id = kwargs['id']
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            error = 'There is no category with given id'
+            return Response(error)
+
+        serializer = CategorySerializer(instance=category, data=request.data)
+    
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    def delete_category(self, request):
+        pass
 
