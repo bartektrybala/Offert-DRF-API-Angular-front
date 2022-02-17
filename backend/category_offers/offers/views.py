@@ -5,6 +5,8 @@ from rest_framework import status, viewsets
 
 from rich import print
 
+ERROR_NO_ITEM = 'NO SUCH ITEM'
+
 class OfferViewSet(viewsets.ModelViewSet):
 
     serializer_class = OfferSerializer
@@ -20,7 +22,6 @@ class OfferViewSet(viewsets.ModelViewSet):
             offers = Offer.objects.all()
         else:
             offers = Offer.objects.filter(category__id=category_id)
-
         serializer = OfferSerializer(offers, many=True)
         return Response(serializer.data)
 
@@ -32,14 +33,12 @@ class OfferViewSet(viewsets.ModelViewSet):
         try:
             offer = Offer.objects.get(id=offer_id)
         except Offer.DoesNotExist:
-            error = 'There is no offer with given id'
-            return Response(error)
+            return Response(ERROR_NO_ITEM)
         serializer = OfferSerializer(offer)
         return Response(serializer.data)
 
     def add_offer(self, request, **kwargs):
         offer = OfferSerializer(data=request.data)
-    
         if offer.is_valid():
             offer.save()
             return Response(offer.data)
@@ -51,19 +50,22 @@ class OfferViewSet(viewsets.ModelViewSet):
         try:
             offer = Offer.objects.get(id=offer_id)
         except Offer.DoesNotExist:
-            error = 'There is no offer with given id'
-            return Response(error)
-
+            return Response(ERROR_NO_ITEM)
         serializer = OfferSerializer(instance=offer, data=request.data)
-    
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def delete_offer(self, request):
-        pass
+    def delete_offer(self, request, **kwargs):
+        offer_id = kwargs['id']
+        try:
+            offer = Offer.objects.get(id=offer_id)
+        except Offer.DoesNotExist:
+            return Response(ERROR_NO_ITEM)
+        offer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class CategoryViewSet(viewsets.ModelViewSet):
 
@@ -75,7 +77,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
         Return a list of all categories.
         """
         categories = Category.objects.order_by('ordering')
-
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
 
@@ -84,14 +85,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
         try:
             category = Category.objects.get(id=category_id)
         except Category.DoesNotExist:
-            error = 'There is no category with given id'
-            return Response(error)
+            return Response(ERROR_NO_ITEM)
         serializer = CategorySerializer(category)
         return Response(serializer.data)
 
     def add_category(self, request, **kwargs):
         category = CategorySerializer(data=request.data)
-
         if category.is_valid():
             category.save()
             return Response(category.data)
@@ -103,17 +102,20 @@ class CategoryViewSet(viewsets.ModelViewSet):
         try:
             category = Category.objects.get(id=category_id)
         except Category.DoesNotExist:
-            error = 'There is no category with given id'
-            return Response(error)
-
+            return Response(ERROR_NO_ITEM)
         serializer = CategorySerializer(instance=category, data=request.data)
-    
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-    def delete_category(self, request):
-        pass
+    def delete_category(self, request, **kwargs):
+        category_id = kwargs['id']
+        try:
+            category = Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            return Response(ERROR_NO_ITEM) 
+        category.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
