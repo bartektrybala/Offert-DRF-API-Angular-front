@@ -24,6 +24,7 @@ category_by_id = CategoryViewSet.as_view({
 })
 
 urlpatterns = [
+    path('', api_overview, name='api-overwiew'),
     path('offers/', offers, name='offers'),
     path('offers/<int:id>', offer_by_id, name='offer'),
     path('category', categories, name='categories'),

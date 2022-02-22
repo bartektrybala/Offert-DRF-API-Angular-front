@@ -2,10 +2,22 @@ from rest_framework.response import Response
 from offers.models import Offer, Category
 from offers.serializers import CategorySerializer, OfferSerializer 
 from rest_framework import status, viewsets
+from rest_framework.decorators import api_view
 
 from rich import print
 
 ERROR_NO_ITEM = 'NO SUCH ITEM'
+
+
+@api_view(('GET',))
+def api_overview(request):
+    api_urls = {
+        '/offers': 'returns all offers(query parameter = ?category=category_id',
+        '/category': 'returns all categories sorted by ordering field',
+        '/offers/id': 'GET, POST, PUT and DELETE methods for a single offer',
+        '/category/id': 'GET, POST, PUT and DELETE methods for a single category',
+    }
+    return Response(api_urls)
 
 class OfferViewSet(viewsets.ModelViewSet):
 
@@ -14,7 +26,7 @@ class OfferViewSet(viewsets.ModelViewSet):
 
     def get_offers(self, request):
         """
-        Return a list of all offers, or a list of offers of a category (category's id) passed as a query parameter.
+        GET all offers | query parameter 'category'
         """
         category_id = request.query_params.get('category', None)
 
@@ -27,7 +39,7 @@ class OfferViewSet(viewsets.ModelViewSet):
 
     def get_offer(self, request, **kwargs):
         """
-        Return an offer by its id.
+        GET single offer
         """
         offer_id = kwargs['id']
         try:
@@ -38,6 +50,9 @@ class OfferViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def add_offer(self, request, **kwargs):
+        """
+        POST single offer
+        """
         offer = OfferSerializer(data=request.data)
         if offer.is_valid():
             offer.save()
@@ -46,6 +61,9 @@ class OfferViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def change_offer(self, request, **kwargs):
+        """
+        PUT single offer
+        """
         offer_id = kwargs['id']
         try:
             offer = Offer.objects.get(id=offer_id)
@@ -59,6 +77,9 @@ class OfferViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def delete_offer(self, request, **kwargs):
+        """
+        DELETE single offer
+        """
         offer_id = kwargs['id']
         try:
             offer = Offer.objects.get(id=offer_id)
@@ -74,13 +95,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def get_categories(self, request):
         """
-        Return a list of all categories.
+        GET all categories
         """
         categories = Category.objects.order_by('ordering')
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data)
 
     def get_category(self, request, **kwargs):
+        """
+        GET single category
+        """
         category_id = kwargs['id']
         try:
             category = Category.objects.get(id=category_id)
@@ -90,6 +114,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def add_category(self, request, **kwargs):
+        """
+        POST single category
+        """
         category = CategorySerializer(data=request.data)
         if category.is_valid():
             category.save()
@@ -98,6 +125,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     def change_category(self, request, **kwargs):
+        """
+        PUT single category
+        """
         category_id = kwargs['id']
         try:
             category = Category.objects.get(id=category_id)
@@ -111,6 +141,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
     def delete_category(self, request, **kwargs):
+        """
+        DELETE single category
+        """
         category_id = kwargs['id']
         try:
             category = Category.objects.get(id=category_id)
