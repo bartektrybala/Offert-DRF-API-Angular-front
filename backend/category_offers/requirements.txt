@@ -1,3 +1,5 @@
 django > 4
 djangorestframework
 django-extensions
+django-cors-headers
+rich
