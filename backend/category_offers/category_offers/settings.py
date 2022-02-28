@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'offers',
     'rest_framework',
     'django_extensions',
-    'corsheaders'
+    'corsheaders',
+    'factory'
 ]
 
 MIDDLEWARE = [

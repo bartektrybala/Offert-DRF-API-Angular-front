@@ -3,3 +3,4 @@ djangorestframework
 django-extensions
 django-cors-headers
 rich
+factory_boy

@@ -1,7 +1,7 @@
-from unicodedata import category
-from rest_framework import serializers
+from rest_framework import serializers, status
 from offers.models import Offer, Category
 from rest_framework.response import Response
+
 
 from rich import print
 
@@ -22,10 +22,9 @@ class OfferSerializer(serializers.ModelSerializer):
         try:
             category = Category.objects.get(id=category_id)
         except Category.DoesNotExist:
-            error = 'There is no category with given id'
-            return Response(error)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         validated_data['category'] = category
- 
         return Offer.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
@@ -34,8 +33,7 @@ class OfferSerializer(serializers.ModelSerializer):
         try:
             category = Category.objects.get(id=category_id)
         except Category.DoesNotExist:
-            error = 'There is no category with given id'
-            return Response(error)
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
         instance.title = validated_data['title']
         instance.price = validated_data['price']
