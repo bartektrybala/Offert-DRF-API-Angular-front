@@ -33,7 +33,11 @@ class OfferViewSet(viewsets.ModelViewSet):
         else:
             offers = Offer.objects.filter(category__id=category_id)
         serializer = OfferSerializer(offers, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+
+        if offers.count() == 0:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        else:
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
     def get_offer(self, request, **kwargs):
         """
@@ -52,6 +56,11 @@ class OfferViewSet(viewsets.ModelViewSet):
         POST single offer
         """
         offer = OfferSerializer(data=request.data)
+        category_id = request.data['category_id']
+        try:
+            Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         if offer.is_valid():
             offer.save()
             return Response(offer.data, status=status.HTTP_201_CREATED)
